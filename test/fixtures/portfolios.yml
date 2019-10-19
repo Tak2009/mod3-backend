@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  local_amt: MyString
+  home_amt: MyString
+  exchange: one
+
+two:
+  local_amt: MyString
+  home_amt: MyString
+  exchange: two
