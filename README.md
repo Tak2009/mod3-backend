@@ -28,4 +28,8 @@ Things you may want to cover:
 3. rails g resource transaction sell_amt buy_amt effectivefx portfolio:references
 4. establish associations: belngs_to/has_many
 5. rails db:migrate
-5. create seed data!S
+6. create seed data!S
+
+added on 21st
+7. rails g resource fxhistory currency rate
+8. establish association: portfolio has_many :fxhistory
