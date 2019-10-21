@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :fxhistories
   resources :transactions
   resources :portfolios
   resources :exchanges
