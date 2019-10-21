@@ -10,13 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_19_161417) do
+ActiveRecord::Schema.define(version: 2019_10_21_115356) do
 
   create_table "exchanges", force: :cascade do |t|
     t.string "currency"
     t.string "rate"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "fxhistories", force: :cascade do |t|
+    t.string "currency"
+    t.string "rate"
+    t.integer "portfolio_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["portfolio_id"], name: "index_fxhistories_on_portfolio_id"
   end
 
   create_table "portfolios", force: :cascade do |t|
@@ -38,6 +47,7 @@ ActiveRecord::Schema.define(version: 2019_10_19_161417) do
     t.index ["portfolio_id"], name: "index_transactions_on_portfolio_id"
   end
 
+  add_foreign_key "fxhistories", "portfolios"
   add_foreign_key "portfolios", "exchanges"
   add_foreign_key "transactions", "portfolios"
 end
