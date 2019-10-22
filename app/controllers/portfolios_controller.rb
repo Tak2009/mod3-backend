@@ -3,13 +3,13 @@ class PortfoliosController < ApplicationController
      # this is for displaying my data on broweser through my API. rails s and then go to http://localhost:3000/portfolios
     def index
         portfolios = Portfolio.all
-        # render json: portfolios
+        render json: portfolios.to_json(include: [:exchange])
     end
     
     # get/portfolios/1
     def show
         portfolio = Portfolio.find_by(id: params[:id])
-        render json: portfolio
+        render json: portfolio.to_json(include: [:exchange])
     end
 
     # def new
