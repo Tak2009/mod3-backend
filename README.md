@@ -43,3 +43,14 @@ Processing by ExchangesController#index as */*
 No serializer found for resource: #<Exchange id: 5, currency: "GBPUSD", rate: 1.2985, created_at: "2019-10-21 13:59:09", updated_at: "2019-10-21 13:59:09">
 [active_model_serializers] Rendered ActiveModel::Serializer::CollectionSerializer with Exchange::ActiveRecord_Relation (0.77ms)
 Completed 200 OK in 4ms (Views: 3.6ms | ActiveRecord: 0.2ms | Allocations: 2360)
+
+
+以下はdeleteno時。シリアライザーをコメントアウトしていた場合に怒った
+Started GET "/exchanges" for ::1 at 2019-10-22 22:31:43 +0100
+   (0.2ms)  SELECT sqlite_version(*)
+Processing by ExchangesController#index as */*
+  Exchange Load (0.2ms)  SELECT "exchanges".* FROM "exchanges"
+  ↳ app/controllers/exchanges_controller.rb:6:in `index'
+No serializer found for resource: #<Exchange id: 5, currency: "GBPUSD", rate: 1.2985, created_at: "2019-10-21 13:59:09", updated_at: "2019-10-21 13:59:09">
+[active_model_serializers] Rendered ActiveModel::Serializer::CollectionSerializer with Exchange::ActiveRecord_Relation (0.76ms)
+Completed 200 OK in 7ms (Views: 6.5ms | ActiveRecord: 0.2ms | Allocations: 2379)
