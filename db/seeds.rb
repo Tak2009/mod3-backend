@@ -34,7 +34,7 @@ result['quotes'].each do |key, value|
   end
 
 c1 = Exchange.find(6)
-c2 = Exchange.find(3)
+c2 = Exchange.find(5)
 
-p1 = Portfolio.create(:local_amt => 200000, :home_amt => 0, :exchange_id => c1.id)
-p2 = Portfolio.create(:local_amt => 2000, :home_amt => 0, :exchange_id => c2.id)
+p1 = Portfolio.create(:local_amt => 4000000, :home_amt => 0, :exchange_id => c1.id)
+p2 = Portfolio.create(:local_amt => 20000, :home_amt => 0, :exchange_id => c2.id)
