@@ -10,4 +10,16 @@ class ExchangesController < ApplicationController
         exchange = Exchange.find_by(id: params[:id])
         render json: exchange
     end
+    
+    # to update database
+    def update
+        exchange = Exchange.find(params[:id])
+        exchange.update(exchange_params)
+    end
+
+    private
+
+	def exchange_params
+		params.require(:exchange).permit!
+	end
 end
