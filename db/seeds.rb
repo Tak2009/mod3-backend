@@ -9,14 +9,14 @@ json = Net::HTTP.get(uri) #NET::HTTPを利用してAPIを呼ぶ
 result = JSON.parse(json) #返ってきたjsonデータをrubyの配列に変換するためのライン
 
 # 2.ここからはデータベースに取得したレートを保存するためのもの
-result['quotes'].each do |key, value|
-    if Exchange.find_by(currency: key)
-      rate = Exchange.find_by(currency: key)
-      rate.update(rate: value)
-    else
-      Exchange.create(currency: key, rate: value)
-    end
-  end
+# result['quotes'].each do |key, value|
+#     if Exchange.find_by(currency: key)
+#       rate = Exchange.find_by(currency: key)
+#       rate.update(rate: value)
+#     else
+#       Exchange.create(currency: key, rate: value)
+#     end
+#   end
 
 # 3.GBPベースでないので
  new_base_currency_gbp_rate = result['quotes']['USDGBP']
