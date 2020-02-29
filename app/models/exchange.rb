@@ -1,3 +1,3 @@
 class Exchange < ApplicationRecord
-    has_many :exchanges
+    has_many :portfolios
 end

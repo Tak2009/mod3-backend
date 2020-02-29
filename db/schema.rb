@@ -10,18 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_19_161417) do
+ActiveRecord::Schema.define(version: 2019_10_21_131235) do
 
   create_table "exchanges", force: :cascade do |t|
     t.string "currency"
-    t.string "rate"
+    t.float "rate"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "fxhistories", force: :cascade do |t|
+    t.string "currency"
+    t.float "rate"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "portfolios", force: :cascade do |t|
-    t.string "local_amt"
-    t.string "home_amt"
+    t.float "local_amt"
+    t.float "home_amt"
     t.integer "exchange_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -29,9 +36,9 @@ ActiveRecord::Schema.define(version: 2019_10_19_161417) do
   end
 
   create_table "transactions", force: :cascade do |t|
-    t.string "sell_amt"
-    t.string "buy_amt"
-    t.string "effectivefx"
+    t.float "sell_amt"
+    t.float "buy_amt"
+    t.float "effectivefx"
     t.integer "portfolio_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

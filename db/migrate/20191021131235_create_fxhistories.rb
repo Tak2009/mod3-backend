@@ -1,6 +1,6 @@
-class CreateExchanges < ActiveRecord::Migration[6.0]
+class CreateFxhistories < ActiveRecord::Migration[6.0]
   def change
-    create_table :exchanges do |t|
+    create_table :fxhistories do |t|
       t.string :currency
       t.float :rate
 
