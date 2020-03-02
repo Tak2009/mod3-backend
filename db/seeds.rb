@@ -23,11 +23,7 @@ result['quotes'].each do |key, value|
  result_base_currency_gbp = result['quotes'].map{|key,value| [key, (value/new_base_currency_gbp_rate).round(4)]}.to_h #GBPをGBPで割ってしまうためUSDGBPレートが１に塗り変わってしまうが先頭のUSDUSDがGBPの元になる
  result_base_currency_gbp_with_right_key_name = result_base_currency_gbp.map{|key,value| ["GBP" + key.slice(3,6), value]}.to_h # keynameの調整
  
-<<<<<<< HEAD
-# 4.dbにセーブ => Exchnagetable = Today's rates
-=======
 # 4.3をdbにセーブ
->>>>>>> Takeshi
  result_base_currency_gbp_with_right_key_name.each do |key, value|
     if Exchange.find_by(currency: key)
       rate = Exchange.find_by(currency: key)
@@ -37,12 +33,6 @@ result['quotes'].each do |key, value|
     end
   end
 
-<<<<<<< HEAD
-# 5.dbにセーブ => History exchnage table へ
- result_base_currency_gbp_with_right_key_name.each do |key, value|
-    Fxhistory.create(currency: key, rate: value)
-end
-=======
 # 不要なUSDを消去
 usd_base = Exchange.where("currency LIKE ?","USD%")
 usd_base.destroy_all
@@ -55,4 +45,3 @@ p1 = Portfolio.create(:local_amt => 4000000, :home_amt => 0, :exchange_id => c1.
 p2 = Portfolio.create(:local_amt => 20000, :home_amt => 0, :exchange_id => c2.id)
 p1.update(:home_amt => (p1.local_amt/Exchange.find(p1.exchange_id).rate).round(3))
 p2.update(:home_amt => (p2.local_amt/Exchange.find(p2.exchange_id).rate).round(3))
->>>>>>> Takeshi
