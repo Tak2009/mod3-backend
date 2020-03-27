@@ -4,7 +4,7 @@ require 'net/http'
 require 'uri'
 require 'json'
 
-uri = URI.parse('http://www.apilayer.net/api/live?access_key=d472b0aa4dbe0894022c08656f86a91e&currencies=USD,JPY,GBP,AUD&format=1') # I reset my own api access key at https://currencylayer.com/. Please make your own key and replace with it
+uri = URI.parse('http://www.apilayer.net/api/live?access_key=f094164179bd7c32fcc8a09a255a458a&currencies=USD,JPY,GBP,AUD&format=1') # I reset my own api access key at https://currencylayer.com/. Please make your own key and replace with it
 json = Net::HTTP.get(uri) #NET::HTTPを利用してAPIを呼ぶ
 result = JSON.parse(json) #返ってきたjsonデータをrubyの配列に変換するためのライン
 

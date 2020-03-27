@@ -1,0 +1,2 @@
+class FxHistory < ApplicationRecord
+end

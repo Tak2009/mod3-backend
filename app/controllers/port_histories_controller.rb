@@ -1,0 +1,2 @@
+class PortHistoriesController < ApplicationController
+end

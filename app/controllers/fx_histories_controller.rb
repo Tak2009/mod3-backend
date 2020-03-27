@@ -1,0 +1,2 @@
+class FxHistoriesController < ApplicationController
+end

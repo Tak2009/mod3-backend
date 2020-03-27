@@ -10,11 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_19_161234) do
+ActiveRecord::Schema.define(version: 2020_03_27_183322) do
 
   create_table "exchanges", force: :cascade do |t|
     t.string "currency"
     t.float "rate"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "fx_histories", force: :cascade do |t|
+    t.string "currency"
+    t.float "rate"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "port_histories", force: :cascade do |t|
+    t.float "local_amt"
+    t.float "home_amt"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
