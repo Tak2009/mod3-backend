@@ -29,6 +29,7 @@ ActiveRecord::Schema.define(version: 2020_03_27_183322) do
   create_table "port_histories", force: :cascade do |t|
     t.float "local_amt"
     t.float "home_amt"
+    t.integer "exchange_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
