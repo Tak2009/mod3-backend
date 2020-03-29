@@ -3,7 +3,7 @@ class CreateFxHistories < ActiveRecord::Migration[6.0]
     create_table :fx_histories do |t|
       t.string :currency
       t.float :rate
-
+      t.datetime :value_date
       t.timestamps
     end
   end

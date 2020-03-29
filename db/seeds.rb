@@ -7,7 +7,29 @@ require 'json'
 uri = URI.parse('http://www.apilayer.net/api/live?access_key='+ ENV['API_KEY'] +'&currencies=USD,JPY,GBP,AUD&format=1') # I reset my own api access key at https://currencylayer.com/. Please make your own key and replace with it
 json = Net::HTTP.get(uri) #NET::HTTPを利用してAPIを呼ぶ
 result = JSON.parse(json) #返ってきたjsonデータをrubyの配列に変換するためのライン
+date_validation = Exchange.find(5).created_at.strftime("%d/%m/%Y")
 
+def history_creation(date_validation)
+  # create fx hist
+    if FxHistory.pluck(:value_date).include?(date_validation)
+      nil
+    else
+      Exchange.all.each do |e|
+      FxHistory.create(currency: e.currency, rate: e.rate, value_date: e.created_at.strftime("%d/%m/%Y"))
+      end
+    end 
+  # create port hist
+  if PortHistory.pluck(:value_date).include?(date_validation)
+    nil
+  else
+    PortHistory.create(home_amt: Portfolio.pluck(:home_amt).sum, value_date: date_validation)
+  end
+end
+
+history_creation(date_validation)
+
+
+byebug
 # 2.ここからはデータベースに取得したレートを保存するためのもの
 result['quotes'].each do |key, value|
     if Exchange.find_by(currency: key)
@@ -37,11 +59,18 @@ result['quotes'].each do |key, value|
 usd_base = Exchange.where("currency LIKE ?","USD%")
 usd_base.destroy_all
 
+def revaluation
+      Portfolio.all.each do |p|
+      p.update(:home_amt => (p.local_amt/Exchange.find(p.exchange_id).rate).round(3))
+      end
+end
 
-c1 = Exchange.find(6)
-c2 = Exchange.find(5)
+revaluation()
 
-p1 = Portfolio.create(:local_amt => 4000000, :home_amt => 0, :exchange_id => c1.id)
-p2 = Portfolio.create(:local_amt => 20000, :home_amt => 0, :exchange_id => c2.id)
-p1.update(:home_amt => (p1.local_amt/Exchange.find(p1.exchange_id).rate).round(3))
-p2.update(:home_amt => (p2.local_amt/Exchange.find(p2.exchange_id).rate).round(3))
+# c1 = Exchange.find(6)
+# c2 = Exchange.find(5)
+
+# p1 = Portfolio.create(:local_amt => 4000000, :home_amt => 0, :exchange_id => c1.id)
+# p2 = Portfolio.create(:local_amt => 20000, :home_amt => 0, :exchange_id => c2.id)
+# p1.update(:home_amt => (p1.local_amt/Exchange.find(p1.exchange_id).rate).round(3))
+# p2.update(:home_amt => (p2.local_amt/Exchange.find(p2.exchange_id).rate).round(3))
