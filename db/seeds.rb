@@ -4,18 +4,19 @@ require 'net/http'
 require 'uri'
 require 'json'
 
-uri = URI.parse('http://www.apilayer.net/api/live?access_key='+ ENV['API_KEY'] +'&currencies=USD,JPY,GBP,AUD&format=1') # I reset my own api access key at https://currencylayer.com/. Please make your own key and replace with it
-json = Net::HTTP.get(uri) #NET::HTTPを利用してAPIを呼ぶ
-result = JSON.parse(json) #返ってきたjsonデータをrubyの配列に変換するためのライン
-date_validation = Exchange.find(5).created_at.strftime("%d/%m/%Y")
+# uri = URI.parse('http://www.apilayer.net/api/live?access_key='+ ENV['API_KEY'] +'&currencies=USD,JPY,GBP,AUD&format=1') # I reset my own api access key at https://currencylayer.com/. Please make your own key and replace with it
+# json = Net::HTTP.get(uri) #NET::HTTPを利用してAPIを呼ぶ
+# result = JSON.parse(json) #返ってきたjsonデータをrubyの配列に変換するためのライン
+date_validation = Exchange.find(5).updated_at.strftime("%d/%m/%Y")
 
+# 1. save data in hist tables
 def history_creation(date_validation)
   # create fx hist
     if FxHistory.pluck(:value_date).include?(date_validation)
       nil
     else
       Exchange.all.each do |e|
-      FxHistory.create(currency: e.currency, rate: e.rate, value_date: e.created_at.strftime("%d/%m/%Y"))
+      FxHistory.create(currency: e.currency, rate: e.rate, value_date: e.updated_at.strftime("%d/%m/%Y"))
       end
     end 
   # create port hist
@@ -28,10 +29,13 @@ end
 
 history_creation(date_validation)
 
+# 2. ここからはデータベースに取得したレートを保存するためのもの
+def getData
+  uri = URI.parse('http://www.apilayer.net/api/live?access_key='+ ENV['API_KEY'] +'&currencies=USD,JPY,GBP,AUD&format=1') # I reset my own api access key at https://currencylayer.com/. Please make your own key and replace with it
+  json = Net::HTTP.get(uri) #NET::HTTPを利用してAPIを呼ぶ
+  result = JSON.parse(json) #返ってきたjsonデータをrubyの配列に変換するためのライン
 
-byebug
-# 2.ここからはデータベースに取得したレートを保存するためのもの
-result['quotes'].each do |key, value|
+  result['quotes'].each do |key, value|
     if Exchange.find_by(currency: key)
       rate = Exchange.find_by(currency: key)
       rate.update(rate: value)
@@ -39,14 +43,12 @@ result['quotes'].each do |key, value|
       Exchange.create(currency: key, rate: value)
     end
   end
-
-# 3.GBPベースでないので計算
- new_base_currency_gbp_rate = result['quotes']['USDGBP']
- result_base_currency_gbp = result['quotes'].map{|key,value| [key, (value/new_base_currency_gbp_rate).round(4)]}.to_h #GBPをGBPで割ってしまうためUSDGBPレートが１に塗り変わってしまうが先頭のUSDUSDがGBPの元になる
- result_base_currency_gbp_with_right_key_name = result_base_currency_gbp.map{|key,value| ["GBP" + key.slice(3,6), value]}.to_h # keynameの調整
- 
-# 4.3をdbにセーブ
- result_base_currency_gbp_with_right_key_name.each do |key, value|
+# 2.1GBPベースでないので計算
+  new_base_currency_gbp_rate = result['quotes']['USDGBP']
+  result_base_currency_gbp = result['quotes'].map{|key,value| [key, (value/new_base_currency_gbp_rate).round(4)]}.to_h #GBPをGBPで割ってしまうためUSDGBPレートが１に塗り変わってしまうが先頭のUSDUSDがGBPの元になる
+  result_base_currency_gbp_with_right_key_name = result_base_currency_gbp.map{|key,value| ["GBP" + key.slice(3,6), value]}.to_h # keynameの調整
+ # 2.2 2.1をdbにセーブ
+  result_base_currency_gbp_with_right_key_name.each do |key, value|
     if Exchange.find_by(currency: key)
       rate = Exchange.find_by(currency: key)
       rate.update(rate: value)
@@ -54,11 +56,14 @@ result['quotes'].each do |key, value|
       Exchange.create(currency: key, rate: value)
     end
   end
+# 2.3. 不要なUSDを消去
+  usd_base = Exchange.where("currency LIKE ?","USD%")
+  usd_base.destroy_all
+end
 
-# 不要なUSDを消去
-usd_base = Exchange.where("currency LIKE ?","USD%")
-usd_base.destroy_all
+getData()
 
+# 3. acc revaluation
 def revaluation
       Portfolio.all.each do |p|
       p.update(:home_amt => (p.local_amt/Exchange.find(p.exchange_id).rate).round(3))
